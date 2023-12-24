@@ -1,0 +1,113 @@
+csharp
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace Dota2Overlay
+{
+    public partial class OverlayForm : Form
+    {
+        private Timer gameTimer;
+        private Label timerLabel;
+        private Label killNotificationLabel;
+
+        public OverlayForm()
+        {
+            InitializeComponent();
+
+            // Устанавливаем размер оверлея
+            this.Width = 200;
+            this.Height = 200;
+
+            // Создаем и настраиваем таймер игры
+            gameTimer = new Timer();
+            gameTimer.Interval = 1000; // 1 секунда
+            gameTimer.Tick += GameTimer_Tick;
+
+            // Создаем и настраиваем метку для таймера
+            timerLabel = new Label();
+            timerLabel.Font = new Font("Arial", 20, FontStyle.Bold);
+            timerLabel.ForeColor = Color.White;
+            timerLabel.Location = new Point(50, 50);
+            timerLabel.Size = new Size(100, 50);
+            timerLabel.TextAlign = ContentAlignment.MiddleCenter;
+            this.Controls.Add(timerLabel);
+
+            // Создаем и настраиваем метку для уведомлений об убийствах
+            killNotificationLabel = new Label();
+            killNotificationLabel.Font = new Font("Arial", 12, FontStyle.Bold);
+            killNotificationLabel.ForeColor = Color.Red;
+            killNotificationLabel.BackColor = Color.Black;
+            killNotificationLabel.AutoSize = true;
+            killNotificationLabel.Visible = false;
+            killNotificationLabel.Padding = new Padding(5);
+            this.Controls.Add(killNotificationLabel);
+        }
+
+        private void GameTimer_Tick(object sender, EventArgs e)
+        {
+            // Обновляем таймер игры
+            // Здесь нужно добавить код для получения оставшегося времени игры из Dota 2
+            // Пример:
+            int remainingTimeInSeconds = GetRemainingTimeInSeconds();
+            TimeSpan remainingTime = TimeSpan.FromSeconds(remainingTimeInSeconds);
+            timerLabel.Text = string.Format("{0}:{1:D2}", remainingTime.Minutes, remainingTime.Seconds);
+
+            // Проверяем условия для показа уведомлений об убийствах
+            // Здесь нужно добавить код для проверки условий убийств из Dota 2
+            // Пример:
+            bool isKillNotificationNeeded = IsKillNotificationNeeded();
+            if (isKillNotificationNeeded)
+            {
+                ShowKillNotification();
+            }
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            // Запускаем таймер игры при загрузке оверлея
+            gameTimer.Start();
+        }
+
+        // Метод для получения оставшегося времени игры из Dota 2
+        private int GetRemainingTimeInSeconds()
+        {
+            // Здесь нужно добавить код для получения оставшегося времени игры из Dota 2 и вернуть его в секундах
+            // Пример:
+            return 300; // 5 минут
+        }
+
+        // Метод для проверки условий убийств из Dota 2
+        private bool IsKillNotificationNeeded()
+        {
+            // Здесь нужно добавить код для проверки условий убийств из Dota 2 и вернуть true или false в зависимости от условий
+            // Пример:
+            return true; // Показывать уведомление об убийствах
+        }
+
+        // Метод для показа уведомления об убийстве
+        private void ShowKillNotification()
+        {
+            // Здесь нужно добавить код для получения информации об убийстве из Dota 2 и отобразить его в уведомлении
+            // Пример:
+            string killer = "Player1";
+            string victim = "Player2";
+            string killNotificationText = string.Format("{0} killed {1}!", killer, victim);
+            killNotificationLabel.Text = killNotificationText;
+            killNotificationLabel.Location = new Point((this.Width - killNotificationLabel.Width) / 2, (this.Height - killNotificationLabel.Height) / 2);
+            killNotificationLabel.Visible = true;
+
+            // Закрываем уведомление через 2 секунды
+            Timer notificationTimer = new Timer();
+            notificationTimer.Interval = 2000; // 2 секунды
+            notificationTimer.Tick += (sender, e) =>
+            {
+                killNotificationLabel.Visible = false;
+                notificationTimer.Stop();
+            };
+            notificationTimer.Start();
+        }
+    }
+}
